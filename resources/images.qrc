@@ -1,0 +1,10 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+	<qresource>
+		<file>images/background.webp</file>
+		<file>images/button_disabled.png</file>
+		<file>images/button_down.png</file>
+		<file>images/button_up.png</file>
+		<file>images/options.png</file>
+	</qresource>
+</RCC>
