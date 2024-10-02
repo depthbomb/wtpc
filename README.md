@@ -4,4 +4,4 @@ It is written in Python and makes heavy use of [Qt](https://doc.qt.io/).
 
 ## Download
 
-You can download either the installer or the portable (single _.exe_) version in the [project releases](https://github.com/depthbomb/wtpc/releases/latest).
+You can download either the installed version (_wtpc_setup.exe_) or the portable version (_wtpc.exe_) in the [project releases](https://github.com/depthbomb/wtpc/releases/latest).
