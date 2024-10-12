@@ -1,8 +1,9 @@
 from ctypes import windll
 from sys import argv, exit
-from wtpc.windows.main_window import MainWindow
+from PySide6.QtGui import QFontDatabase
 from contextlib import suppress, contextmanager
 from PySide6.QtCore import QFile, QSharedMemory
+from wtpc.windows.main_window import MainWindow
 from PySide6.QtWidgets import QDialog, QApplication
 from wtpc.windows.settings_window import SettingsWindow
 from wtpc.settings import user_settings, UserSettingsKeys
@@ -59,6 +60,10 @@ def _start(args: list[str]) -> int:
                 # Rejected, in this case, means that the dialog was closed without clicking the save button
                 app.quit()
                 return 0
+
+        QFontDatabase.applicationFontFamilies(
+            QFontDatabase.addApplicationFont(':fonts/frizquadrata.ttf')
+        )
 
         mw = MainWindow()
         mw.show()

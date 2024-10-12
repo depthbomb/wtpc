@@ -1,10 +1,9 @@
-from random import random
+from PySide6.QtGui import QFont, QIcon
 from datetime import datetime, timedelta
 from wtpc.notifier import show_notification
 from wtpc.widgets.square_button import SquareButton
 from wtpc.price_check_worker import PriceCheckWorker
 from PySide6.QtCore import Qt, Slot, QTimer, QProcess
-from PySide6.QtGui import QFont, QIcon, QFontDatabase
 from wtpc.windows.settings_window import SettingsWindow
 from wtpc import APP_DISPLAY_NAME, NOTIFICATION_HERO_PATH
 from wtpc.settings import user_settings, UserSettingsKeys
@@ -38,11 +37,6 @@ class MainWindow(QWidget):
         self.next_update_timer.setInterval(1_000)
         self.next_update_timer.setSingleShot(False)
         self.next_update_timer.timeout.connect(self._on_next_update_timer_timeout)
-
-        # Load custom font
-        self.display_font = QFontDatabase.applicationFontFamilies(
-            QFontDatabase.addApplicationFont(':fonts/frizquadrata.ttf')
-        )
 
         # Create the main frame in which all other widgets are parented to
         frame = QFrame(self)
@@ -104,10 +98,9 @@ class MainWindow(QWidget):
         next_update_total_seconds = int(next_update_time_remaining.total_seconds())
         next_update_minutes = next_update_total_seconds // 60
         next_update_seconds = next_update_total_seconds % 60
-        use_silly_prefix = random() < (50 / 100)
 
         if next_update_total_seconds <= 0:
-            self.setWindowTitle(f'[{'Soon™' if use_silly_prefix else 'Waiting...'}] {APP_DISPLAY_NAME}')
+            self.setWindowTitle(f'[Soon™] {APP_DISPLAY_NAME}')
         else:
             self.setWindowTitle(f'[{next_update_minutes:02}:{next_update_seconds:02}] {APP_DISPLAY_NAME}')
 
@@ -138,7 +131,7 @@ class MainWindow(QWidget):
 
     def _create_status_label(self, parent: QFrame) -> QLabel:
         self.status = QLabel('Loading...', parent)
-        self.status.setFont(QFont(self.display_font, 36))
+        self.status.setFont(QFont('Friz Quadrata', 36))
         self.status.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.status.setStyleSheet('color: #fff')
 
@@ -146,7 +139,7 @@ class MainWindow(QWidget):
 
     def _create_timestamp_label(self, parent: QFrame) -> QLabel:
         self.timestamp = QLabel('...', parent)
-        self.timestamp.setFont(QFont(self.display_font, 12))
+        self.timestamp.setFont(QFont('Friz Quadrata', 12))
         self.timestamp.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.timestamp.setStyleSheet('margin-top: 10px;color: #fff')
 
@@ -154,7 +147,7 @@ class MainWindow(QWidget):
 
     def _create_error_label(self, parent: QFrame) -> QLabel:
         self.error_label = QLabel(parent)
-        self.error_label.setFont(QFont(self.display_font, 11))
+        self.error_label.setFont(QFont('Friz Quadrata', 11))
         self.error_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.error_label.setStyleSheet('color: red')
 
@@ -162,4 +155,4 @@ class MainWindow(QWidget):
     #endregion
 
     def _send_notification(self, message: str) -> None:
-        show_notification(title = message, image_path=NOTIFICATION_HERO_PATH)
+        show_notification(title=message, image_path=NOTIFICATION_HERO_PATH)

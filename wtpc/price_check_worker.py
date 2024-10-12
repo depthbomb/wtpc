@@ -43,7 +43,7 @@ class PriceCheckWorker(QObject):
 
                 self.check_price()
             else:
-                last_updated_timestamp = cast(int, json['last_updated_timestamp']) / 1000
+                last_updated_timestamp = cast(int, json['last_updated_timestamp']) // 1_000
                 price = cast(int, json['price']) // 10_000
 
                 self.price_updated.emit(price, last_updated_timestamp)
