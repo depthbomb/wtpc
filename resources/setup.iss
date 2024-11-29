@@ -1,6 +1,6 @@
 #define MyAppName "WoW Token Price Checker"
 #define MyAppDescription "WoW Token Price Checker"
-#define MyAppVersion "1.0.0.0"
+#define MyAppVersion "1.0.1.0"
 #define MyAppPublisher "Caprine Logic"
 #define MyAppExeName "wtpc.exe"
 #define MyAppCopyright "Copyright (C) 2024 Caprine Logic"
