@@ -1,9 +1,8 @@
 from base64 import b64encode
 from typing import cast, Optional
-from datetime import datetime, timedelta
 from PySide6.QtNetwork import QNetworkReply, QNetworkRequest, QNetworkAccessManager
 from wtpc.settings import app_settings, user_settings, AppSettingsKeys, UserSettingsKeys
-from PySide6.QtCore import Slot, QUrl, Signal, QTimer, QObject, QByteArray, QJsonDocument
+from PySide6.QtCore import Slot, QUrl, Signal, QTimer, QObject, QDateTime, QByteArray, QJsonDocument
 
 OAUTH_URL = QUrl('https://oauth.battle.net/token')
 
@@ -35,11 +34,12 @@ class PriceCheckWorker(QObject):
         if status_code == 200:
             json = QJsonDocument.fromJson(reply.readAll()).object()
             if url == OAUTH_URL:
+                now = QDateTime.currentDateTime()
                 access_token = cast(str, json['access_token'])
                 expires_in = cast(int, json['expires_in'])
 
                 app_settings.setValue(AppSettingsKeys.ACCESS_TOKEN, access_token)
-                app_settings.setValue(AppSettingsKeys.ACCESS_TOKEN_EXPIRES, datetime.now() + timedelta(seconds=expires_in))
+                app_settings.setValue(AppSettingsKeys.ACCESS_TOKEN_EXPIRES, now.addSecs(expires_in))
 
                 self.check_price()
             else:
@@ -50,7 +50,6 @@ class PriceCheckWorker(QObject):
         elif status_code == 401:
             self._get_access_token()
         else:
-            print(status_code)
             self.error.emit(reply.errorString())
 
     @Slot()
@@ -59,9 +58,9 @@ class PriceCheckWorker(QObject):
     #endregion
 
     def check_price(self):
-        now = datetime.now()
+        now = QDateTime.currentDateTime()
         access_token = cast(Optional[str], app_settings.value(AppSettingsKeys.ACCESS_TOKEN, None))
-        access_token_expires = cast(Optional[datetime], app_settings.value(AppSettingsKeys.ACCESS_TOKEN_EXPIRES, None))
+        access_token_expires = cast(Optional[QDateTime], app_settings.value(AppSettingsKeys.ACCESS_TOKEN_EXPIRES, None))
         is_token_expired = access_token_expires is None or access_token_expires < now
 
         if access_token is None or is_token_expired:

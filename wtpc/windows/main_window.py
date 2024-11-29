@@ -1,12 +1,11 @@
 from PySide6.QtGui import QFont, QIcon
-from datetime import datetime, timedelta
 from wtpc.notifier import show_notification
 from wtpc.widgets.square_button import SquareButton
 from wtpc.price_check_worker import PriceCheckWorker
-from PySide6.QtCore import Qt, Slot, QTimer, QProcess
 from wtpc.windows.settings_window import SettingsWindow
 from wtpc import APP_DISPLAY_NAME, NOTIFICATION_HERO_PATH
 from wtpc.settings import user_settings, UserSettingsKeys
+from PySide6.QtCore import Qt, Slot, QTimer, QProcess, QDateTime
 from PySide6.QtWidgets import (
     QLabel,
     QFrame,
@@ -22,7 +21,7 @@ from PySide6.QtWidgets import (
 class MainWindow(QWidget):
     _first_check = True
     _last_price = 0
-    _next_update = 0
+    _next_update = QDateTime.currentDateTime()
 
     def __init__(self):
         super().__init__()
@@ -72,15 +71,15 @@ class MainWindow(QWidget):
 
     @Slot(int, int)
     def _on_token_price_updated(self, price: int, last_updated: int):
-        date = datetime.fromtimestamp(last_updated)
+        date = QDateTime.fromSecsSinceEpoch(last_updated)
 
-        self._next_update = date + timedelta(minutes=20)
+        self._next_update = date.addSecs(1_200)
 
         has_changed = self._last_price != price
         should_notify = user_settings.value(UserSettingsKeys.SEND_NOTIFICATIONS, False, bool)
 
         self.status.setText(f'{price:,}')
-        self.timestamp.setText(f'Updated: {date}')
+        self.timestamp.setText(f'Updated: {date.toPython()}')
         self.error_label.setText('')
 
         if should_notify and has_changed and not self._first_check:
@@ -93,13 +92,12 @@ class MainWindow(QWidget):
 
     @Slot()
     def _on_next_update_timer_timeout(self):
-        now = datetime.now()
-        next_update_time_remaining = self._next_update - now
-        next_update_total_seconds = int(next_update_time_remaining.total_seconds())
-        next_update_minutes = next_update_total_seconds // 60
-        next_update_seconds = next_update_total_seconds % 60
+        now = QDateTime.currentDateTime()
+        next_update_time_remaining = now.secsTo(self._next_update)
+        next_update_minutes = next_update_time_remaining // 60
+        next_update_seconds = next_update_time_remaining % 60
 
-        if next_update_total_seconds <= 0:
+        if next_update_time_remaining <= 0:
             self.setWindowTitle(f'[Soon™] {APP_DISPLAY_NAME}')
         else:
             self.setWindowTitle(f'[{next_update_minutes:02}:{next_update_seconds:02}] {APP_DISPLAY_NAME}')
