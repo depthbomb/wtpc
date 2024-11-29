@@ -1,4 +1,6 @@
-pyside6==6.8.0
+pyside6==6.8.0.2
 
-winrt-windows.data.xml.dom==2.2.0
-winrt-windows.ui.notifications==2.2.0
+winrt-windows.data.xml.dom==2.3.0
+winrt-windows.ui.notifications==2.3.0
+
+nuitka==2.5.4
