@@ -81,8 +81,7 @@ def _single_instance():
     finally:
         shared_mem.detach()
 
-if __name__ == '__main__':
-    with suppress(Exception):
-        windll.shell32.SetCurrentProcessExplicitAppUserModelID(APP_USER_MODEL_ID)
+with suppress(Exception):
+    windll.shell32.SetCurrentProcessExplicitAppUserModelID(APP_USER_MODEL_ID)
 
-    exit(_start(argv))
+exit(_start(argv))
